@@ -10,3 +10,28 @@ type KeyValue struct {
 	Key   string
 	Value string
 }
+
+// struct is used to implement the Map() function
+type mapWorker struct {
+	mapWorker Mapper
+}
+
+// Generate a new object of type mapWorker
+func newMapWorker(mapper Mapper) *mapWorker {
+	return &mapWorker{
+		mapWorker: mapper,
+	}
+}
+
+// Parses the input data and invokes the map function
+// Arguments input1 and input2 represent the fileName and the contents of the file
+func (worker *mapWorker) performMap(input1, input2 string) []KeyValue {
+	return worker.mapWorker.Map(input1, input2)
+}
+
+// Implementation of the map function
+// This will be overwritten by client programs depending on their use case
+func (worker *mapWorker) Map(key, value string) []KeyValue {
+	var data []KeyValue
+	return data
+}
