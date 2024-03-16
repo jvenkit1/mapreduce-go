@@ -16,8 +16,8 @@ const (
 )
 
 type Task struct {
-	Type   TaskType
-	Status TaskStatus
-	File   string
-	Index  int
+	taskType   TaskType
+	taskStatus TaskStatus
+	files      []string
+	numReduce  int // Number of Reduce tasks. 1 if the task is a "map" task
 }

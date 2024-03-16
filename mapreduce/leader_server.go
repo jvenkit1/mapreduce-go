@@ -2,8 +2,9 @@ package mapreduce
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -12,7 +13,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func Server() {
-	log.Println("Starting up server at port 8080")
+	log.Info().Msg("Starting up server at port 8080")
 	http.HandleFunc("/", Index)
 	http.ListenAndServe(":8080", nil)
 }

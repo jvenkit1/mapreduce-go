@@ -1,9 +1,10 @@
 package mapreduce
 
 import (
-	"log"
 	"net"
 	"net/rpc"
+
+	"github.com/rs/zerolog/log"
 )
 
 type ShutdownArgs struct {
@@ -15,7 +16,7 @@ func (leader *Leader) setupRPCServer() {
 
 	listener, err := net.Listen("unix", leader.address)
 	if err != nil {
-		log.Fatalf("Unable to register leader node at address: %s, error=%s", leader.address, err)
+		log.Fatal().Err(err).Msgf("Unable to register leader node at address: %s", leader.address)
 	}
 
 	leader.listener = listener
@@ -54,7 +55,7 @@ func (leader *Leader) shutdownRPCServer() {
 func (leader *Leader) shutdownFollowerNode(address string) {
 	client, err := rpc.Dial("tcp", address)
 	if err != nil {
-		log.Fatalf("Failed to dial follower %s with error %s", address, err)
+		log.Fatal().Err(err).Msgf("Failed to dial follower %s", address)
 	}
 
 	defer client.Close()
@@ -67,6 +68,6 @@ func (leader *Leader) shutdownFollowerNode(address string) {
 
 	err = client.Call("Follower Shutdown", args, &reply)
 	if err != nil {
-		log.Fatalf("Unable to shutdown follower %s with error %s", address, err)
+		log.Fatal().Err(err).Msgf("Unable to shutdown follower %s", address)
 	}
 }
