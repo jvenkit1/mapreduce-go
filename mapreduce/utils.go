@@ -67,3 +67,35 @@ func (leader *Leader) mergeTasks(opName string) {
 
 	log.Info().Msgf("Finished merging all intermediate files for operation %s", opName)
 }
+
+// Function reads all contents from intermediateFiles and the output file,
+// after which it performs a simple string comparison
+func (leader *Leader) validateMerge(opName string) bool {
+	var intermediateDir string = "intermediate/" + opName
+	var outputFileName string = "output-" + opName + ".txt"
+
+	files, err := os.ReadDir(intermediateDir)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Directory read failed for operation %s", opName)
+	}
+
+	var expectedContent []byte
+	for _, intermediateFile := range files {
+		intermediateFileName := intermediateFile.Name()
+		if leader.isIntermediateFile(intermediateFileName) {
+			content, err := os.ReadFile(fmt.Sprintf("%s/%s", intermediateDir, intermediateFileName))
+			if err != nil {
+				log.Fatal().Err(err).Msgf("Unable to read file %s", intermediateFileName)
+			}
+
+			expectedContent = append(expectedContent, content...)
+		}
+	}
+
+	actualContent, err := os.ReadFile(outputFileName)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Unable to read outputfile %s", outputFileName)
+	}
+
+	return string(expectedContent) == string(actualContent)
+}
