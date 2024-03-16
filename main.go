@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "mapreduce-go/mapreduce"
 
 func main() {
-	fmt.Print("Hello World")
+	mapreduce.Server()
 }
