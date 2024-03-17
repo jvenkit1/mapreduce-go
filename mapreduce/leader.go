@@ -120,7 +120,7 @@ func (leader *Leader) scheduleJob(opName string, tasks []string, numReduce int, 
 func (leader *Leader) invokeAndProcess(registeredFollowers chan string, trackerChannel chan int, tasksChannel chan int, currentTask Task, index int) {
 	address := <-registeredFollowers // wait till we get a new follower available
 
-	response := leader.Call(address, "Follower.Perform", currentTask, nil)
+	response := Call(address, "Follower.Perform", currentTask, nil)
 
 	if response {
 		trackerChannel <- 1

@@ -7,7 +7,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// Used by a follower when registering with the leader
+type RegisterArgs struct {
+	followerAddress string
+}
+
 type ShutdownArgs struct {
+	numTasks int
 }
 
 func (leader *Leader) SetupRPCServer() {
@@ -72,7 +78,7 @@ func (leader *Leader) ShutdownFollowerNode(address string) {
 	}
 }
 
-func (leader *Leader) Call(address string, rpcName string, args interface{}, reply interface{}) bool {
+func Call(address string, rpcName string, args interface{}, reply interface{}) bool {
 	c, err := rpc.Dial("unix", address)
 	if err != nil {
 		log.Error().Err(err).Msgf("Unable to dial server at %v", address)
