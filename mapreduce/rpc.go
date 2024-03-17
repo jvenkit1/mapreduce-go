@@ -10,7 +10,7 @@ import (
 type ShutdownArgs struct {
 }
 
-func (leader *Leader) setupRPCServer() {
+func (leader *Leader) SetupRPCServer() {
 	rpcServer := rpc.NewServer()
 	rpcServer.Register(leader)
 
@@ -35,14 +35,14 @@ func (leader *Leader) setupRPCServer() {
 	}()
 }
 
-func (leader *Leader) shutdownRPCServer() {
+func (leader *Leader) ShutdownRPCServer() {
 	leader.Lock()
 	defer leader.Unlock()
 
 	// close(leader.shutdown) // closes the shutdown channel owned by leader
 
 	for _, f := range leader.followers {
-		go leader.shutdownFollowerNode(f)
+		go leader.ShutdownFollowerNode(f)
 	}
 
 	if leader.listener != nil {
@@ -52,7 +52,7 @@ func (leader *Leader) shutdownRPCServer() {
 }
 
 // Shutdown a follower node given its address
-func (leader *Leader) shutdownFollowerNode(address string) {
+func (leader *Leader) ShutdownFollowerNode(address string) {
 	client, err := rpc.Dial("tcp", address)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Failed to dial follower %s", address)
@@ -70,4 +70,22 @@ func (leader *Leader) shutdownFollowerNode(address string) {
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to shutdown follower %s", address)
 	}
+}
+
+func (leader *Leader) Call(address string, rpcName string, args interface{}, reply interface{}) bool {
+	c, err := rpc.Dial("unix", address)
+	if err != nil {
+		log.Error().Err(err).Msgf("Unable to dial server at %v", address)
+		return false
+	}
+
+	defer c.Close()
+
+	err = c.Call(rpcName, args, reply)
+	if err != nil {
+		log.Error().Err(err).Msgf("Unable to make the actual rpc call for operation: %v", rpcName)
+		return false
+	}
+
+	return true
 }
