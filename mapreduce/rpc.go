@@ -36,8 +36,8 @@ func (leader *Leader) setupRPCServer() {
 }
 
 func (leader *Leader) shutdownRPCServer() {
-	leader.lock.Lock()
-	defer leader.lock.Unlock()
+	leader.Lock()
+	defer leader.Unlock()
 
 	// close(leader.shutdown) // closes the shutdown channel owned by leader
 
