@@ -16,8 +16,21 @@ const (
 )
 
 type Task struct {
-	taskType   TaskType
-	taskStatus TaskStatus
-	files      []string
-	numReduce  int // Number of Reduce tasks. 1 if the task is a "map" task
+	opName           string
+	taskType         TaskType
+	taskStatus       TaskStatus
+	currentTaskIndex int
+	file             string
+	numIntermediate  int // Number of intermediate files to be generated / used
+}
+
+func NewTask(opName string, taskType TaskType, file string, currentTaskIndex, numIntermediate int) Task {
+	return Task{
+		opName:           opName,
+		taskType:         taskType,
+		taskStatus:       Waiting,
+		file:             file,
+		currentTaskIndex: currentTaskIndex,
+		numIntermediate:  numIntermediate,
+	}
 }
