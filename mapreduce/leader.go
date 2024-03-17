@@ -182,7 +182,7 @@ func (leader *Leader) executeReducePhase() {
 func (leader *Leader) setupLeader(address, jobName string, inputFiles []string, numReduce int) {
 	leader = leader.newLeader(address, jobName, inputFiles, numReduce)
 
-	leader.setupRPCServer()
+	leader.SetupRPCServer()
 
 	go func() {
 		go leader.executeMapPhase()
